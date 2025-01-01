@@ -20,6 +20,6 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          ssh -o StrictHostKeyChecking=no usuario@IP-del-servidor 'bash -s' < ./deploy_script.sh
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USER_SERVER }}@${{ secrets.IP_SERVER }} 'bash -s' < ./deploy_script.sh
         env:
           DEPLOY_ENV: production  # Variable de entorno (opcional)
