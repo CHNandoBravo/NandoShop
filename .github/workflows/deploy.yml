@@ -1,0 +1,25 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main  # Desplegar cuando haya un push a la rama main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Usar la última versión de Ubuntu para ejecutar el flujo
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Obtener el código fuente del repositorio
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3  # Usar la clave SSH
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usar el secreto SSH
+
+      - name: Deploy to VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no usuario@IP-del-servidor 'bash -s' < ./deploy_script.sh
+        env:
+          DEPLOY_ENV: production  # Variable de entorno (opcional)
