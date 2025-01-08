@@ -20,9 +20,14 @@ jobs:
       - name: Debug secrets
         run: |
           echo "Mostrando secrets disponibles..."
-          echo "SSH_PRIVATE_KEY está configurado: ${SSH_PRIVATE_KEY:+Sí}" # Confirma si está cargado
+          if [ -n "$SSH_PRIVATE_KEY" ]; then
+            echo "SSH_PRIVATE_KEY está configurado: Sí"
+          else
+            echo "SSH_PRIVATE_KEY no está configurado."
+          fi
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          OTRO_SECRET: ${{ secrets.OTRO_SECRET }}
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.USER_SERVER }}@${{ secrets.IP_SERVER }} 'bash -s' < ./deploy_script.sh
