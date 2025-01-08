@@ -17,7 +17,12 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3  # Usar la clave SSH
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usar el secreto SSH
-
+      - name: Debug secrets
+        run: |
+          echo "Mostrando secrets disponibles..."
+          echo "SSH_PRIVATE_KEY está configurado: ${SSH_PRIVATE_KEY:+Sí}" # Confirma si está cargado
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Deploy to VPS
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.USER_SERVER }}@${{ secrets.IP_SERVER }} 'bash -s' < ./deploy_script.sh
