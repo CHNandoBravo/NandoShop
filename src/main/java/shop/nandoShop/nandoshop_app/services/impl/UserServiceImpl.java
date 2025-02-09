@@ -21,12 +21,12 @@ public class UserServiceImpl {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User registerUser(String email, String password, Role role) {
+    public User registerUser(String email, String password, String firstName, String lastName, Role role) {
         if(userRepository.findByEmail(email).isPresent()){
             throw new RuntimeException("El email ya está en uso.");
         }
         String encodedPassword = passwordEncoder.encode(password);
-        User user = new User(email, encodedPassword, role);
+        User user = new User(email, encodedPassword,firstName,lastName, role);
         return userRepository.save(user);
     }
 

@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
         try {
-            User user = userService.registerUser(registerRequest.getEmail(), registerRequest.getPassword(), Role.USER);
+            User user = userService.registerUser(registerRequest.getEmail(), registerRequest.getPassword(), registerRequest.getFirstName(), registerRequest.getLastName(), Role.USER);
             return ResponseEntity.ok(user);
         } catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
