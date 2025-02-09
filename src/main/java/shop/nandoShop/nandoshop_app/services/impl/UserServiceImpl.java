@@ -8,11 +8,12 @@ import shop.nandoShop.nandoshop_app.entities.User;
 import shop.nandoShop.nandoshop_app.enums.Role;
 import shop.nandoShop.nandoshop_app.repositories.UserRepository;
 
+import javax.xml.validation.Validator;
+
 @Service
 public class UserServiceImpl {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
