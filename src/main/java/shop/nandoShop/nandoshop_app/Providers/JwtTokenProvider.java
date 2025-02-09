@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
+import shop.nandoShop.nandoshop_app.entities.User;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -30,12 +31,12 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(keyBytes);
     }
     // Método para generar un token (simplificado)
-    public String generateToken(String username) {
-//            Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
+    public String generateToken(User user) {
             long nowMillis = System.currentTimeMillis();
             long expMillis = nowMillis + jwtExpirationInMs;
             return Jwts.builder()
-                    .setSubject(username)
+                    .setSubject(user.getEmail())
+                    .claim("role", user.getRole().name())
                     .setIssuedAt(new java.util.Date(nowMillis))
                     .setExpiration(new java.util.Date(expMillis))
                     .signWith(getSigningKey()) // Usa la llave generada
@@ -45,7 +46,6 @@ public class JwtTokenProvider {
     // Método para extraer el username (subject) del token
     public String getUsernameFromJWT(String token) {
         try{
-//            Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
             Claims claims = Jwts.parser()
                 .setSigningKey(getSigningKey())  // Se asigna la llave
                 .build()             // Se construye el JwtParser
@@ -61,9 +61,8 @@ public class JwtTokenProvider {
     // Método para validar el token
     public boolean validateToken(String token) {
         try {
-            Key key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
             Jwts.parser()
-                    .setSigningKey(key)
+                    .setSigningKey(getSigningKey())
                     .build()
                     .parseClaimsJws(token);
             return true;
@@ -74,11 +73,4 @@ public class JwtTokenProvider {
         return false;
     }
 
-    public Authentication getAuthentication(String token) {
-        String username = getUsernameFromJWT(token);
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-    }
 }
