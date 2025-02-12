@@ -34,6 +34,9 @@ echo "Verificando que la aplicación esté corriendo..."
 sleep 5  # espera unos segundos para que la aplicación arranque
 ps aux | grep "$APP_NAME.jar" || { echo "La aplicación no se está ejecutando correctamente"; exit 1; }
 
+
+sudo systemctl restart api-test.service
+
 echo "Despliegue completado con éxito."
 
 
