@@ -36,6 +36,4 @@ ps aux | grep "$APP_NAME.jar" || { echo "La aplicación no se está ejecutando c
 
 echo "Despliegue completado con éxito."
 
-# 6. Actualiza el VPS 
-mvn clean package
-sudo systemctl restart api-test.service
+
