@@ -35,3 +35,6 @@ sleep 5  # espera unos segundos para que la aplicación arranque
 ps aux | grep "$APP_NAME.jar" || { echo "La aplicación no se está ejecutando correctamente"; exit 1; }
 
 echo "Despliegue completado con éxito."
+
+# 6. Actualiza el VPS 
+sudo systemctl restart api-test.service
