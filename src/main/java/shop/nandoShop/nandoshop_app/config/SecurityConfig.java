@@ -35,7 +35,10 @@ public class SecurityConfig {
                                 "/v1/auth/register",
                                 "/v1/auth/me"
                         ).permitAll()
-                        .requestMatchers("/v1/admin/grant-seller-role").hasAnyAuthority("ADMIN")
+                        .requestMatchers(
+                                "/v1/admin/grant-seller-role",
+                                "/v1/category"
+                        ).hasAnyAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
