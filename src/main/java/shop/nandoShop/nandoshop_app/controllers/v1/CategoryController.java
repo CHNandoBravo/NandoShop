@@ -27,7 +27,7 @@ public class CategoryController {
             categoryService.create(category);
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("La categoría fue creada con exito", true));
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>("La categoría no se pudo crearse con exito", true, e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse<>("La categoría no pudo crearse con exito", true, e.getMessage()));
         }
     }
 }
