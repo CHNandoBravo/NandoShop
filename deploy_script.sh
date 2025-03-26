@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Variables
+# Variables de Entorno
 APP_NAME="nandoshop-app"
 GIT_REPO="https://github.com/CHNandoBravo/NandoShop.git"
 DEPLOY_DIR="/root/nandoshop-test"
