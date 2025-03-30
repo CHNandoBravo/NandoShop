@@ -1,6 +1,8 @@
 package shop.nandoShop.nandoshop_app.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -55,4 +57,15 @@ public class UserServiceImpl {
         user.setRole(Role.SELLER);
         userRepository.save(user);
     }
+
+
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null; // O lanzar una excepción si lo prefieres
+        }
+
+        return (User) authentication.getPrincipal();
+    }
+
 }
