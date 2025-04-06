@@ -34,7 +34,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v1/auth/login",
                                 "/v1/auth/register",
-                                "/v1/auth/me"
+                                "/v1/auth/me",
+                                "/v1/auth/google"
                         ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/product").hasAnyAuthority("SELLER")
                         .requestMatchers(
