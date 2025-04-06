@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import shop.nandoShop.nandoshop_app.Providers.JwtTokenProvider;
+import shop.nandoShop.nandoshop_app.dtos.requests.GoogleAuthRequest;
 import shop.nandoShop.nandoshop_app.dtos.requests.LoginRequest;
 import shop.nandoShop.nandoshop_app.dtos.requests.RegisterRequest;
 import shop.nandoShop.nandoshop_app.dtos.responses.JwtAuthenticationResponse;
@@ -27,6 +28,7 @@ import shop.nandoShop.nandoshop_app.entities.User;
 import shop.nandoShop.nandoshop_app.enums.Role;
 import shop.nandoShop.nandoshop_app.repositories.UserRepository;
 import shop.nandoShop.nandoshop_app.services.impl.UserServiceImpl;
+import shop.nandoShop.nandoshop_app.services.interfaces.GoogleAuthService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -56,6 +58,9 @@ public class AuthController {
 
     @Value("${jwt.secret}")
     private String jwtSecret;
+
+    @Autowired
+    GoogleAuthService googleAuthService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest) {
@@ -107,45 +112,19 @@ public class AuthController {
     }
 
     @PostMapping("/google")
-    public ResponseEntity<?> authenticateWithGoogle(@RequestBody Map<String, String> request) {
-        String token = request.get("token");
-
-        if (token == null || token.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Token de Google es requerido");
-        }
-
+    public ResponseEntity<?> authenticateWithGoogle(@RequestBody GoogleAuthRequest request) {
         try {
-            // Valida el token con Google
-            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
-                    new NetHttpTransport(),
-                    JacksonFactory.getDefaultInstance()
-            )
-                    .setAudience(Collections.singletonList(googleClientId))
-                    .build();
-
-            GoogleIdToken idToken = verifier.verify(token);
-            if (idToken == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token de Google inválido");
-            }
-
-            GoogleIdToken.Payload payload = idToken.getPayload();
-            String email = payload.getEmail();
-            String name = (String) payload.get("name");
-
-            // Buscar usuario en DB o crear uno temporal
-            User user = new User();
-            user.setEmail(email);
-            user.setFirstName(name);
-            user.setRole(Role.USER);
-
-            // Usar JwtTokenProvider para generar el JWT
-            String jwt = tokenProvider.generateToken(user);
-
-
+            String token = request.getToken();
+            String jwt = googleAuthService.authenticateWithGoogle(token);
             return ResponseEntity.ok(Collections.singletonMap("token", jwt));
 
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+
         } catch (Exception e) {
-            // Logging más útil para debug
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al autenticar con Google: " + e.getMessage());
