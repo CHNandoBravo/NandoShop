@@ -5,6 +5,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,7 +19,8 @@ import java.security.Key;
 @Component
 public class JwtTokenProvider {
     // Cadena secreta (en producción, almacénala de forma segura)
-    private String jwtSecret = "MIICWwIBAAKBgQCtYo32glu50D5XU3e7jk5RW3OvmmSIA4RxvS2N7acGixkvRkkn2yIGQXGhMmWzU6dT4gKEdsdJugP7iv5ornIs+VNLzunXLGu+qTHeG5BQJneugeTdSNZsu4cf7j0XrHo0mDONExkvKiXsG32XqqZ/8QJx9WZA3U+QV4JHrHd82wIDAQAB";
+    @Value("${jwt.secret}")
+    private String jwtSecret;
 
     @Autowired
     UserDetailsService userDetailsService;

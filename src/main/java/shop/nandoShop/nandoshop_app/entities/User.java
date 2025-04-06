@@ -36,7 +36,7 @@ public class User implements UserDetails {
     private String email;
 
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "password", nullable = true)
     private String password;
 
     @Column(name = "first_name")
