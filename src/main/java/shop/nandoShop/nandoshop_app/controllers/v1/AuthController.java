@@ -102,7 +102,7 @@ public class AuthController {
             User user = (User) authentication.getPrincipal();
 
             // Crear una respuesta personalizada sin exponer la contraseña
-            UserResponse userResponse = new UserResponse(user.getEmail(), user.getRole().name());
+            UserResponse userResponse = new UserResponse(user.getEmail(), user.getRole().name(),user.getLastName(),user.getFirstName());
 
             return ResponseEntity.ok(userResponse);
         } catch (Exception e){
