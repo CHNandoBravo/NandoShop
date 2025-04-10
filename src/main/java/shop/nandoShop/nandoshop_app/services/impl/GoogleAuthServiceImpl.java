@@ -46,8 +46,8 @@ public class GoogleAuthServiceImpl implements GoogleAuthService {
         String email = payload.getEmail();
         String firstName = (String) payload.get("given_name");
         String lastName = (String) payload.get("family_name");
-        // Podés buscar en la DB acá si querés
-        // 🔍 Verificás si ya existe
+
+        //  Verificás si ya existe
         Optional<User> existingUser = userRepository.findByEmail(email);
 
         User user;
