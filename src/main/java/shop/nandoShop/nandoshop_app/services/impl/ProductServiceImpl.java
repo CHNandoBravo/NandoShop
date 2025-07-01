@@ -2,6 +2,7 @@ package shop.nandoShop.nandoshop_app.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
 import shop.nandoShop.nandoshop_app.entities.Category;
 import shop.nandoShop.nandoshop_app.entities.Product;
@@ -10,6 +11,9 @@ import shop.nandoShop.nandoshop_app.repositories.CategoryRepository;
 import shop.nandoShop.nandoshop_app.repositories.ProductRepository;
 import shop.nandoShop.nandoshop_app.repositories.UserRepository;
 import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
+import shop.nandoShop.nandoshop_app.utils.AuthUtil;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -46,5 +50,24 @@ public class ProductServiceImpl implements ProductService {
         catch (Exception e) {
             throw new RuntimeException("Error al crear la entidad Product: "+e.getMessage(), e);
         }
+    }
+
+    @Override
+    public List<ProductResponseDTO> showAllMyProducts() {
+        User user = userService.getCurrentUser();
+        List<Product> products = productRepository.findBySeller(user);
+
+        return products.stream()
+                .map(product -> new ProductResponseDTO(
+                        product.getId(),
+                        product.getCategory().getName(),
+                        product.getName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()
+                ))
+                .toList();
     }
 }
