@@ -31,12 +31,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 "/v1/auth/login",
                                 "/v1/auth/register",
                                 "/v1/auth/me",
                                 "/v1/auth/google"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v1/my_products").hasAuthority("SELLER")
                         .requestMatchers(HttpMethod.POST, "/v1/product").hasAnyAuthority("SELLER")
                         .requestMatchers(
                                 "/v1/admin/grant-seller-role",
