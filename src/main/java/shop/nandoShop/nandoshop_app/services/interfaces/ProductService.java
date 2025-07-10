@@ -9,4 +9,5 @@ import java.util.List;
 public interface ProductService {
     Product create(ProductRequest productRequest);
     List<ProductResponseDTO> showAllMyProducts();
+    void deleteProduct(Long id);
 }

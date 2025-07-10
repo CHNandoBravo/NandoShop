@@ -40,6 +40,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/v1/my_products").hasAuthority("SELLER")
                         .requestMatchers(HttpMethod.POST, "/v1/product").hasAnyAuthority("SELLER")
+                        .requestMatchers(HttpMethod.DELETE, "/v1/product/**").hasAnyAuthority("SELLER")
                         .requestMatchers(
                                 "/v1/admin/grant-seller-role",
                                 "/v1/category"
