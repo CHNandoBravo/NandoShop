@@ -1,13 +1,6 @@
 package shop.nandoShop.nandoshop_app.controllers.v1;
 
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
-import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -30,12 +23,7 @@ import shop.nandoShop.nandoshop_app.repositories.UserRepository;
 import shop.nandoShop.nandoshop_app.services.impl.UserServiceImpl;
 import shop.nandoShop.nandoshop_app.services.interfaces.GoogleAuthService;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
 
 @Validated
 @RestController
