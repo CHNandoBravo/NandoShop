@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
+import shop.nandoShop.nandoshop_app.dtos.requests.UpdateStockRequest;
 import shop.nandoShop.nandoshop_app.dtos.responses.ApiResponse;
 import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.exceptions.NotFoundException;
@@ -50,6 +51,24 @@ public class ProductController {
             throw ex;
         } catch (AccessDeniedException ex) {
             log.warn("Eliminación fallida - acceso denegado para producto id={}", id);
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Error inesperado eliminando producto id={}", id, ex);
+            throw ex;
+        }
+    }
+    @PutMapping("/product/stock/{id}")
+    public ResponseEntity<Void> updateStock(@Positive @PathVariable Long id, @Valid @RequestBody UpdateStockRequest request){
+        log.info("Request UPDATE /products/{} iniciada", id);
+        try {
+            productService.updateStock(id, request);
+            log.info("Request UPDATE /products/{} procesada con éxito", id);
+            return ResponseEntity.noContent().build();
+        } catch (NotFoundException ex) {
+            log.warn("Actualizacion fallida - producto no encontrado: id={}", id);
+            throw ex;
+        } catch (AccessDeniedException ex) {
+            log.warn("Actualizacion fallida - acceso denegado para producto id={}", id);
             throw ex;
         } catch (Exception ex) {
             log.error("Error inesperado eliminando producto id={}", id, ex);
