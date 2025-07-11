@@ -4,14 +4,12 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
+import shop.nandoShop.nandoshop_app.dtos.requests.UpdateNameProductRequest;
+import shop.nandoShop.nandoshop_app.dtos.requests.UpdatePriceProductRequest;
 import shop.nandoShop.nandoshop_app.dtos.requests.UpdateStockRequest;
-import shop.nandoShop.nandoshop_app.dtos.responses.ApiResponse;
 import shop.nandoShop.nandoshop_app.entities.Category;
 import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.entities.User;
@@ -20,9 +18,7 @@ import shop.nandoShop.nandoshop_app.repositories.CategoryRepository;
 import shop.nandoShop.nandoshop_app.repositories.ProductRepository;
 import shop.nandoShop.nandoshop_app.repositories.UserRepository;
 import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
-import shop.nandoShop.nandoshop_app.utils.AuthUtil;
 
-import java.time.LocalDateTime;
 import java.util.List;
 @Slf4j
 @Service
@@ -122,6 +118,54 @@ public class ProductServiceImpl implements ProductService {
                         return new NotFoundException("Producto con id: " + id + " no encontrado o no pertenece al usuario.");
                     });
             product.setStock(request.getNewStock());
+
+            productRepository.save(product);
+            log.info("Producto marcado como actualizado: id={}, nombre={}", product.getId(), product.getName());
+        } finally {
+            MDC.remove("userId");
+            MDC.remove("productId");
+        }
+    }
+
+    @Override
+    public void updatePrice(Long id, UpdatePriceProductRequest request) {
+        User user = userService.getCurrentUser();
+
+        MDC.put("userId", String.valueOf(user.getId()));
+        MDC.put("productId", String.valueOf(id));
+        try {
+            log.debug("Inicio actualizacion del precio del producto id: {} para usuario id: {}", id, user.getId());
+
+            Product product = productRepository.findByIdAndSeller(id, user)
+                    .orElseThrow(() -> {
+                        log.warn("Producto no encontrado o no pertenece al usuario: productId={}, userId={}", id, user.getId());
+                        return new NotFoundException("Producto con id: " + id + " no encontrado o no pertenece al usuario.");
+                    });
+            product.setPrice(request.getNewPrice());
+
+            productRepository.save(product);
+            log.info("Producto marcado como actualizado: id={}, nombre={}", product.getId(), product.getName());
+        } finally {
+            MDC.remove("userId");
+            MDC.remove("productId");
+        }
+    }
+
+    @Override
+    public void updateName(Long id, UpdateNameProductRequest request) {
+        User user = userService.getCurrentUser();
+
+        MDC.put("userId", String.valueOf(user.getId()));
+        MDC.put("productId", String.valueOf(id));
+        try {
+            log.debug("Inicio actualizacion del nombre del producto id: {} para usuario id: {}", id, user.getId());
+
+            Product product = productRepository.findByIdAndSeller(id, user)
+                    .orElseThrow(() -> {
+                        log.warn("Producto no encontrado o no pertenece al usuario: productId={}, userId={}", id, user.getId());
+                        return new NotFoundException("Producto con id: " + id + " no encontrado o no pertenece al usuario.");
+                    });
+            product.setName(request.getNewName());
 
             productRepository.save(product);
             log.info("Producto marcado como actualizado: id={}, nombre={}", product.getId(), product.getName());

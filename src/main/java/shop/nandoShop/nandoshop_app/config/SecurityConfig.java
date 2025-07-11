@@ -41,7 +41,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/v1/my_products").hasAuthority("SELLER")
                         .requestMatchers(HttpMethod.POST, "/v1/product").hasAnyAuthority("SELLER")
                         .requestMatchers(HttpMethod.DELETE, "/v1/product/**").hasAnyAuthority("SELLER")
-                        .requestMatchers(HttpMethod.PUT, "/v1/product/**").hasAnyAuthority("SELLER")
+                        .requestMatchers(HttpMethod.PUT, "/v1/product/stock/**").hasAnyAuthority("SELLER")
+                        .requestMatchers(HttpMethod.PUT, "/v1/product/price/**").hasAnyAuthority("SELLER")
                         .requestMatchers(
                                 "/v1/admin/grant-seller-role",
                                 "/v1/category"
