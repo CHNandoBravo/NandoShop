@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -20,4 +21,6 @@ public class ProductRequest {
     private int stock;
     @NotNull(message = "La categoría es obligatoria")
     private Long categoryId;
+
+    private MultipartFile image;
 }

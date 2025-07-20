@@ -10,16 +10,18 @@ public class ProductResponseDTO {
     private Long id;
     private String category;
     private String name;
+    private String image;
     private String description;
     private BigDecimal price;
     private int stock;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public ProductResponseDTO(Long id, String category, String name, String description, BigDecimal price, int stock, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ProductResponseDTO(Long id, String category, String name, String image, String description, BigDecimal price, int stock, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.category = category;
         this.name = name;
+        this.image = image;
         this.description = description;
         this.price = price;
         this.stock = stock;

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
@@ -16,6 +17,7 @@ import shop.nandoShop.nandoshop_app.dtos.requests.UpdateStockRequest;
 import shop.nandoShop.nandoshop_app.dtos.responses.ApiResponse;
 import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.exceptions.NotFoundException;
+import shop.nandoShop.nandoshop_app.mappers.ProductMapper;
 import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
 
 import java.util.List;
@@ -29,9 +31,12 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-    @PostMapping("/product")
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest productRequest) {
-        return ResponseEntity.ok(productService.create(productRequest));
+    @PostMapping(value = "/product",consumes = "multipart/form-data")
+    public ResponseEntity<ProductResponseDTO> createProduct(@Valid @ModelAttribute ProductRequest productRequest) {
+        Product product = productService.create(productRequest);
+        ProductResponseDTO dto = ProductMapper.toResponse(product);
+        return ResponseEntity.ok(dto);
+
     }
 
     @GetMapping("/my_products")

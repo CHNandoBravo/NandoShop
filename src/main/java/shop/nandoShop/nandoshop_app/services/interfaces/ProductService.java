@@ -1,5 +1,6 @@
 package shop.nandoShop.nandoshop_app.services.interfaces;
 
+import org.springframework.web.multipart.MultipartFile;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
 import shop.nandoShop.nandoshop_app.dtos.requests.UpdateStockRequest;
