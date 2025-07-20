@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+import shop.nandoShop.nandoshop_app.dtos.AssetDTO;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
 import shop.nandoShop.nandoshop_app.dtos.requests.UpdateNameProductRequest;
@@ -17,6 +20,7 @@ import shop.nandoShop.nandoshop_app.exceptions.NotFoundException;
 import shop.nandoShop.nandoshop_app.repositories.CategoryRepository;
 import shop.nandoShop.nandoshop_app.repositories.ProductRepository;
 import shop.nandoShop.nandoshop_app.repositories.UserRepository;
+import shop.nandoShop.nandoshop_app.services.interfaces.AssetsService;
 import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
 
 import java.util.List;
@@ -35,12 +39,17 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     UserServiceImpl userService;
 
+    @Autowired
+    AssetsService assetsService;
+
     @Override
     public Product create(ProductRequest productRequest) {
         try {
             User user = userService.getCurrentUser();
 
             Category category = categoryRepository.getById(productRequest.getCategoryId());
+
+            AssetDTO imageUrl = assetsService.uploadFile(productRequest.getImage());
 
             Product product = new Product();
             product.setCategory(category);
@@ -49,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
             product.setDescription(productRequest.getDescription());
             product.setPrice(productRequest.getPrice());
             product.setStock(productRequest.getStock());
-
+            product.setImageUrl(imageUrl.url());
             productRepository.save(product);
             return product;
         }
@@ -68,6 +77,7 @@ public class ProductServiceImpl implements ProductService {
                         product.getId(),
                         product.getCategory().getName(),
                         product.getName(),
+                        product.getImageUrl(),
                         product.getDescription(),
                         product.getPrice(),
                         product.getStock(),
