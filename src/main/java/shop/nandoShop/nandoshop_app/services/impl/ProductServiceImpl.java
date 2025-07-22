@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import shop.nandoShop.nandoshop_app.dtos.AssetDTO;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
-import shop.nandoShop.nandoshop_app.dtos.requests.ProductRequest;
-import shop.nandoShop.nandoshop_app.dtos.requests.UpdateNameProductRequest;
-import shop.nandoShop.nandoshop_app.dtos.requests.UpdatePriceProductRequest;
-import shop.nandoShop.nandoshop_app.dtos.requests.UpdateStockRequest;
+import shop.nandoShop.nandoshop_app.dtos.requests.*;
 import shop.nandoShop.nandoshop_app.entities.Category;
 import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.entities.User;
@@ -179,6 +176,34 @@ public class ProductServiceImpl implements ProductService {
 
             productRepository.save(product);
             log.info("Producto marcado como actualizado: id={}, nombre={}", product.getId(), product.getName());
+        } finally {
+            MDC.remove("userId");
+            MDC.remove("productId");
+        }
+    }
+
+    @Override
+    public void updateImage(Long id, UpdateImageProductRequest request) {
+        User user = userService.getCurrentUser();
+
+        MDC.put("userId", String.valueOf(user.getId()));
+        MDC.put("productId", String.valueOf(id));
+        try {
+            log.debug("Inicio actualizacion de la imagen del producto id: {} para usuario id: {}", id, user.getId());
+
+            Product product = productRepository.findByIdAndSeller(id, user)
+                    .orElseThrow(() -> {
+                        log.warn("Producto no encontrado o no pertenece al usuario: productId={}, userId={}", id, user.getId());
+                        return new NotFoundException("Producto con id: " + id + " no encontrado o no pertenece al usuario.");
+                    });
+            assetsService.deleteFile(product.getImageUrl());
+            AssetDTO imageUrl = assetsService.uploadFile(request.getImage());
+            product.setImageUrl(imageUrl.url());
+
+            productRepository.save(product);
+            log.info("Producto marcado como actualizado: id={}, nombre={}", product.getId(), product.getName());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         } finally {
             MDC.remove("userId");
             MDC.remove("productId");
