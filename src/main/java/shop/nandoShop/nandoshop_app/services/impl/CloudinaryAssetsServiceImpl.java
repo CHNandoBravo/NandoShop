@@ -27,4 +27,8 @@ public class CloudinaryAssetsServiceImpl implements AssetsService {
         return new AssetDTO(cloudinary.uploader().upload(file.getBytes(), options)
         );
     }
+    @Override
+    public void deleteFile(String publicId) throws Exception {
+        cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+    }
 }
