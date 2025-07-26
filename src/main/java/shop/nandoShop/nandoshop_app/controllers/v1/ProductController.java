@@ -52,18 +52,6 @@ public class ProductController {
         return ResponseEntity.ok(productService.showAllMyProducts());
     }
 
-    @GetMapping(value = "/products/all/sdfsdfsd", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ProductResponseDTO>> showAllProducts() {
-        try {
-            List<ProductResponseDTO> products = productService.showAllProducts();
-            return ResponseEntity.ok(products);
-        } catch (Exception e) {
-            // Podés usar un logger como log.error(...) si tenés logback configurado
-            System.err.println("Error al obtener productos: " + e.getMessage());
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build(); // HTTP 500
-        }
-    }
     @GetMapping(value = "/products/all", produces = MediaType.APPLICATION_NDJSON_VALUE)
     public ResponseBodyEmitter streamAllProductsNdjson(
             @RequestParam(defaultValue = "0") int offset,

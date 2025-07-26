@@ -11,8 +11,6 @@ import java.util.function.Consumer;
 public interface ProductService {
     Product create(ProductRequest productRequest);
     List<ProductResponseDTO> showAllMyProducts();
-    List<ProductResponseDTO> showAllProducts();
-    void streamAllProducts(Consumer<ProductResponseDTO> consumer);
     void streamProductsPaged(int offset, int limit, String category, Consumer<ProductResponseDTO> consumer);
     List<ProductResponseDTO> showRandom8Products();
     void deleteProduct(Long id);

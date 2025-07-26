@@ -88,45 +88,6 @@ public class ProductServiceImpl implements ProductService {
                 ))
                 .toList();
     }
-    @Override
-    public List<ProductResponseDTO> showAllProducts() {
-        List<Product> products = productRepository.findAll();
-
-        return products.stream()
-                .map(product -> new ProductResponseDTO(
-                        product.getId(),
-                        product.getCategory().getName(),
-                        product.getName(),
-                        product.getImageUrl(),
-                        product.getDescription(),
-                        product.getPrice(),
-                        product.getStock(),
-                        product.getCreatedAt(),
-                        product.getUpdatedAt()
-                ))
-                .toList();
-    }
-
-    @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public void streamAllProducts(Consumer<ProductResponseDTO> consumer) {
-        try (Stream<Product> stream = productRepository.streamAll()) {
-            stream.forEach(product -> {
-                ProductResponseDTO dto = new ProductResponseDTO(
-                        product.getId(),
-                        product.getCategory().getName(),
-                        product.getName(),
-                        product.getImageUrl(),
-                        product.getDescription(),
-                        product.getPrice(),
-                        product.getStock(),
-                        product.getCreatedAt(),
-                        product.getUpdatedAt()
-                );
-                consumer.accept(dto);
-            });
-        }
-    }
     public void streamProductsPaged(int offset, int limit, String category, Consumer<ProductResponseDTO> consumer) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
         List<Product> products = productRepository.findPaged(category, pageable); // paginación custom aquí
