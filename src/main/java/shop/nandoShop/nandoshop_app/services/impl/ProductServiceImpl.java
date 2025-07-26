@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,6 +23,9 @@ import shop.nandoShop.nandoshop_app.services.interfaces.AssetsService;
 import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -83,6 +88,86 @@ public class ProductServiceImpl implements ProductService {
                 ))
                 .toList();
     }
+    @Override
+    public List<ProductResponseDTO> showAllProducts() {
+        List<Product> products = productRepository.findAll();
+
+        return products.stream()
+                .map(product -> new ProductResponseDTO(
+                        product.getId(),
+                        product.getCategory().getName(),
+                        product.getName(),
+                        product.getImageUrl(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()
+                ))
+                .toList();
+    }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public void streamAllProducts(Consumer<ProductResponseDTO> consumer) {
+        try (Stream<Product> stream = productRepository.streamAll()) {
+            stream.forEach(product -> {
+                ProductResponseDTO dto = new ProductResponseDTO(
+                        product.getId(),
+                        product.getCategory().getName(),
+                        product.getName(),
+                        product.getImageUrl(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()
+                );
+                consumer.accept(dto);
+            });
+        }
+    }
+    public void streamProductsPaged(int offset, int limit, String category, Consumer<ProductResponseDTO> consumer) {
+        Pageable pageable = PageRequest.of(offset / limit, limit);
+        List<Product> products = productRepository.findPaged(category, pageable); // paginación custom aquí
+        products.forEach(product -> {
+            ProductResponseDTO dto = mapToDto(product);
+            consumer.accept(dto);
+        });
+    }
+    private ProductResponseDTO mapToDto(Product product) {
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getCategory().getName(),
+                product.getName(),
+                product.getImageUrl(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getStock(),
+                product.getCreatedAt(),
+                product.getUpdatedAt()
+        );
+    }
+
+    @Override
+    public List<ProductResponseDTO> showRandom8Products() {
+        List<Product> products = productRepository.findRandom8Products();
+
+        return products.stream()
+                .map(product -> new ProductResponseDTO(
+                        product.getId(),
+                        product.getCategory().getName(),
+                        product.getName(),
+                        product.getImageUrl(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCreatedAt(),
+                        product.getUpdatedAt()
+                ))
+                .toList();
+    }
+
     @Transactional
     @Override
     public void deleteProduct(Long id) {
