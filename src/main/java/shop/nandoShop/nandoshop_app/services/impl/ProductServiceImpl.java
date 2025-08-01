@@ -88,9 +88,9 @@ public class ProductServiceImpl implements ProductService {
                 ))
                 .toList();
     }
-    public void streamProductsPaged(int offset, int limit, String category, Consumer<ProductResponseDTO> consumer) {
+    public void streamProductsPaged(int offset, int limit, String category, String query, Consumer<ProductResponseDTO> consumer) {
         Pageable pageable = PageRequest.of(offset / limit, limit);
-        List<Product> products = productRepository.findPaged(category, pageable); // paginación custom aquí
+        List<Product> products = productRepository.findPaged(category, query, pageable); // paginación custom aquí
         products.forEach(product -> {
             ProductResponseDTO dto = mapToDto(product);
             consumer.accept(dto);

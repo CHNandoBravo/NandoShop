@@ -56,14 +56,15 @@ public class ProductController {
     public ResponseBodyEmitter streamAllProductsNdjson(
             @RequestParam(defaultValue = "0") int offset,
             @RequestParam(defaultValue = "20") int limit,
-            @RequestParam(required = false) String category
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String query
     ) {
         ResponseBodyEmitter emitter = new ResponseBodyEmitter();
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         executor.execute(() -> {
             try {
-                productService.streamProductsPaged(offset, limit, category, productDto -> {
+                productService.streamProductsPaged(offset, limit, category, query, productDto -> {
                     try {
                         String json = objectMapper.writeValueAsString(productDto);
                         emitter.send(json + "\n", MediaType.APPLICATION_NDJSON);

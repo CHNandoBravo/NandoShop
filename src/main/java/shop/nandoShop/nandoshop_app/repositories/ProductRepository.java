@@ -19,6 +19,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p")
     Stream<Product> streamAll();
 
-    @Query("SELECT p FROM Product p WHERE (:category IS NULL OR p.category.name = :category)")
-    List<Product> findPaged(@Param("category") String category, Pageable pageable);
+    @Query("""
+    SELECT p FROM Product p
+    WHERE (:category IS NULL OR p.category = :category)
+    AND (:query IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :query, '%')))
+    """)
+    List<Product> findPaged(@Param("category") String category, @Param("query") String query, Pageable pageable);
 }
