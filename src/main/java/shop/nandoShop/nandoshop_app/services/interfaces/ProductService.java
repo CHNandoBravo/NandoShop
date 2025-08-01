@@ -1,6 +1,5 @@
 package shop.nandoShop.nandoshop_app.services.interfaces;
 
-import org.springframework.web.multipart.MultipartFile;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.*;
 import shop.nandoShop.nandoshop_app.entities.Product;
@@ -11,7 +10,7 @@ import java.util.function.Consumer;
 public interface ProductService {
     Product create(ProductRequest productRequest);
     List<ProductResponseDTO> showAllMyProducts();
-    void streamProductsPaged(int offset, int limit, String category, Consumer<ProductResponseDTO> consumer);
+    void streamProductsPaged(int offset, int limit, String category, String query, Consumer<ProductResponseDTO> consumer);
     List<ProductResponseDTO> showRandom8Products();
     void deleteProduct(Long id);
     void updateStock(Long id, UpdateStockRequest request);
