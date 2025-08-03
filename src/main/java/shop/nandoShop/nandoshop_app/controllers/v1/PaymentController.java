@@ -12,7 +12,7 @@ import shop.nandoShop.nandoshop_app.dtos.responses.PaymentPreferenceResponse;
 import shop.nandoShop.nandoshop_app.services.interfaces.PaymentService;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/v1/payments")
 public class PaymentController {
     private final PaymentService paymentService;
 
