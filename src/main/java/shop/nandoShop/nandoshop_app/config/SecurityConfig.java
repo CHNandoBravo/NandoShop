@@ -38,7 +38,9 @@ public class SecurityConfig {
                                 "/v1/auth/me",
                                 "/v1/auth/google",
                                 "/v1/products/all",
-                                "/v1/products/8"
+                                "/v1/products/random/8",
+                                "/api/payments/create",
+                                "/v1/product/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/v1/my_products").hasAuthority("SELLER")
                         .requestMatchers(HttpMethod.POST, "/v1/product").hasAnyAuthority("SELLER")

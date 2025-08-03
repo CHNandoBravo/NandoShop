@@ -1,6 +1,7 @@
 package shop.nandoShop.nandoshop_app.exceptions;
 
-import org.apache.coyote.BadRequestException;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -60,5 +61,27 @@ public class GlobalExceptionHandler {
                 "Parámetro inválido",
                 message
         ), HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(MPException.class)
+    public ResponseEntity<ErrorResponse> handleMPException(MPException ex) {
+        return new ResponseEntity<>(new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "Error en Mercado Pago",
+                ex.getMessage()
+        ), HttpStatus.SERVICE_UNAVAILABLE);
+    }
+    @ExceptionHandler(MPApiException.class)
+    public ResponseEntity<ErrorResponse> handleMPApiException(MPApiException ex) {
+        String message = ex.getApiResponse() != null
+                ? ex.getApiResponse().getContent()
+                : "Error de API de Mercado Pago";
+
+        return new ResponseEntity<>(new ErrorResponse(
+                LocalDateTime.now(),
+                ex.getStatusCode(), // Usa el código devuelto por MP
+                "Error de API de Mercado Pago",
+                message
+        ), HttpStatus.valueOf(ex.getStatusCode()));
     }
 }
