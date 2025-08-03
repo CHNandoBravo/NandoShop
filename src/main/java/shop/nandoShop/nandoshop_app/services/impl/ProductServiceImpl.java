@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import shop.nandoShop.nandoshop_app.dtos.AssetDTO;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.*;
@@ -16,6 +14,8 @@ import shop.nandoShop.nandoshop_app.entities.Category;
 import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.entities.User;
 import shop.nandoShop.nandoshop_app.exceptions.NotFoundException;
+import shop.nandoShop.nandoshop_app.exceptions.ProductNotFoundException;
+import shop.nandoShop.nandoshop_app.mappers.ProductMapper;
 import shop.nandoShop.nandoshop_app.repositories.CategoryRepository;
 import shop.nandoShop.nandoshop_app.repositories.ProductRepository;
 import shop.nandoShop.nandoshop_app.repositories.UserRepository;
@@ -24,7 +24,6 @@ import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -254,5 +253,18 @@ public class ProductServiceImpl implements ProductService {
             MDC.remove("userId");
             MDC.remove("productId");
         }
+    }
+
+    @Override
+    public ProductResponseDTO getProductById(Long id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+
+        return ProductMapper.toResponse(product);
+    }
+
+    public Product getProductOrThrow(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 }

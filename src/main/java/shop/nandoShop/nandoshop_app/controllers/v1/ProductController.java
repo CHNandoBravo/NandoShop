@@ -11,14 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import shop.nandoShop.nandoshop_app.dtos.ProductResponseDTO;
 import shop.nandoShop.nandoshop_app.dtos.requests.*;
-import shop.nandoShop.nandoshop_app.dtos.responses.ApiResponse;
 import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.exceptions.NotFoundException;
+import shop.nandoShop.nandoshop_app.exceptions.ProductNotFoundException;
 import shop.nandoShop.nandoshop_app.mappers.ProductMapper;
 import shop.nandoShop.nandoshop_app.services.interfaces.ProductService;
 
@@ -82,8 +80,17 @@ public class ProductController {
             
         return emitter;
     }
+    @GetMapping("/product/{id}")
+    public ResponseEntity<ProductResponseDTO> showProductById(@PathVariable Long id){
+        try {
+            ProductResponseDTO product = productService.getProductById(id);
+            return ResponseEntity.ok(product);
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
-    @GetMapping("/products/8")
+    @GetMapping("/products/random/8")
     public ResponseEntity<List<ProductResponseDTO>> showRandom8Products() {
         try {
             List<ProductResponseDTO> products = productService.showRandom8Products();
