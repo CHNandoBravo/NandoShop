@@ -41,7 +41,7 @@ public class SecurityConfig {
                                 "/v1/products/random/8",
                                 "/v1/payments/create",
                                 "/v1/product/**",
-                                "/v1/webhook/mp"
+                                "/v1/webhook/mercadopago"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/v1/my_products").hasAuthority("SELLER")
                         .requestMatchers(HttpMethod.POST, "/v1/product").hasAnyAuthority("SELLER")
