@@ -5,4 +5,5 @@ import shop.nandoShop.nandoshop_app.dtos.responses.PaymentPreferenceResponse;
 
 public interface PaymentService {
     PaymentPreferenceResponse createPayment(PaymentRequest request);
+    void approvePayment(Long paymentId);
 }

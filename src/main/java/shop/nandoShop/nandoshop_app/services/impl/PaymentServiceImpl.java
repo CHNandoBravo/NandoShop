@@ -3,6 +3,7 @@ package shop.nandoShop.nandoshop_app.services.impl;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,8 @@ import shop.nandoShop.nandoshop_app.entities.Product;
 import shop.nandoShop.nandoshop_app.entities.User;
 import shop.nandoShop.nandoshop_app.enums.PaymentStatus;
 import shop.nandoShop.nandoshop_app.exceptions.PaymentGatewayException;
+import shop.nandoShop.nandoshop_app.exceptions.PaymentNotFoundException;
+import shop.nandoShop.nandoshop_app.exceptions.ProductNotFoundException;
 import shop.nandoShop.nandoshop_app.mappers.PaymentMapper;
 import shop.nandoShop.nandoshop_app.repositories.PaymentRepository;
 import shop.nandoShop.nandoshop_app.repositories.ProductRepository;
@@ -66,6 +69,23 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
+    public void approvePayment(Long paymentId) {
+        Payment payment = getPaymentOrThrow(paymentId);
+
+        MDC.put("paymentId", String.valueOf(paymentId));
+        try{
+            log.debug("Inicio actualizacion del pago id: {} para producto id: {} del pagador id: {}", paymentId, payment.getProductId().getId(), payment.getPayer().getId());
+
+            payment.setStatus(PaymentStatus.APPROVED);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            MDC.remove("paymentId");
+        }
+    }
+
     public PaymentStatusResponse checkPaymentStatus(String paymentId) {
         return paymentGateway.checkStatus(paymentId);
     }
@@ -91,4 +111,8 @@ public class PaymentServiceImpl implements PaymentService {
         return payment;
     }
 
+    public Payment getPaymentOrThrow(Long productId) {
+        return paymentRepository.findById(productId)
+                .orElseThrow(() -> new PaymentNotFoundException(productId));
+    }
 }
