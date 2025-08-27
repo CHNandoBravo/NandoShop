@@ -25,6 +25,10 @@ public class Payment {
 
     private BigDecimal unitPrice;
 
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product productId;
+
     private BigDecimal totalPrice;
 
     private int quantity;
